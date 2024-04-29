@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('form-gasto');
     const listaGastos = document.getElementById('lista-gastos');
+    const API_URL = 'http://localhost:3000/api/gastos';
 
     async function carregarGastos() {
-        const response = await fetch('/api/gastos');
+        const response = await fetch(API_URL);
         const gastos = await response.json();
         listaGastos.innerHTML = '';
         gastos.forEach(gasto => {
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let valor = prompt('Digite o novo valor:');
             if (descricao && valor) {
                 valor = removerFormatoReal(valor);
-                await fetch(`/api/gastos/${id}`, {
+                await fetch(`${API_URL}/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (event.target.classList.contains('btn-excluir')) {
             const id = event.target.getAttribute('data-id');
             if (confirm('Tem certeza que deseja excluir este gasto?')) {
-                await fetch(`/api/gastos/${id}`, {
+                await fetch(`${API_URL}/${id}`, {
                     method: 'DELETE'
                 });
                 await carregarGastos();
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let valor = document.getElementById('valor').value;
         if (descricao && valor) {
             valor = removerFormatoReal(valor);
-            await fetch('/api/gastos', {
+            await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
