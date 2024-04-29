@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Controle de Gastos</h1>
+        <form id="form-gasto">
+            <label for="descricao">Descrição do gasto:</label>
+            <input type="text" id="descricao" name="descricao" required>
+            <label for="valor">Valor:</label>
+            <input type="text" id="valor" name="valor" required onkeyup="formatarReal(this)" onblur="formatarReal(this)">
+            <button type="submit">Adicionar Gasto</button>
+        </form>
+        <table id="tabela-gastos">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="lista-gastos">
+                
+            </tbody>
+        </table>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        function formatarReal(elemento) {
+            var valor = elemento.value.replace(/\D/g, '');
+            valor = (valor / 100).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+            elemento.value = "R$ " + valor;
+        }
+    </script>
+</body>
+</html>
