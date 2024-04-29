@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="controleGastos">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Gastos</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div ng-controller="GastosController" class="container">
         <h1>Controle de Gastos</h1>
-        <form id="form-gasto">
+        <form id="form-gasto" ng-submit="adicionarGasto()">
             <label for="descricao">Descrição do gasto:</label>
-            <input type="text" id="descricao" name="descricao" required>
+            <input type="text" id="descricao" name="descricao" ng-model="descricao" required>
             <label for="valor">Valor:</label>
-            <input type="text" id="valor" name="valor" required onkeyup="formatarReal(this)" onblur="formatarReal(this)">
+            <input type="text" id="valor" name="valor" ng-model="valor" required>
             <button type="submit">Adicionar Gasto</button>
         </form>
         <table id="tabela-gastos">
@@ -27,18 +27,19 @@
                 </tr>
             </thead>
             <tbody id="lista-gastos">
-                
+                <tr ng-repeat="gasto in gastos">
+                    <td>{{ gasto.descricao }}</td>
+                    <td>{{ gasto.valor | currency }}</td>
+                    <td>
+                        <button class="btn-editar" ng-click="editarGasto(gasto)">Editar</button>
+                        <button class="btn-excluir" ng-click="excluirGasto(gasto.id)">
+                            <span class="mdi mdi-delete mdi-24px"></span>
+                        </button>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-
     <script src="main.js"></script>
-    <script>
-        function formatarReal(elemento) {
-            var valor = elemento.value.replace(/\D/g, '');
-            valor = (valor / 100).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
-            elemento.value = "R$ " + valor;
-        }
-    </script>
 </body>
 </html>
