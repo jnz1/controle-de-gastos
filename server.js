@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const gastoRoute = require('./src/routes/route.js')
+const gastoRoute = require('./src/routes/route.js');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 app.use(bodyParser.json());
 

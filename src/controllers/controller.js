@@ -1,55 +1,71 @@
-const { Gasto, gastos } = require('../models/model.js');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-
-exports.adicionarGasto = (req, res) => {
+exports.adicionarGasto = async (req, res) => {
     const { descricao, valor } = req.body;
-    if (!descricao || !valor) {
-        return res.status(400).json({ message: 'Descrição e valor são obrigatórios.' });
-    }
-    const novoGasto = new Gasto(gastos.length + 1, descricao, valor);
-    gastos.push(novoGasto);
-    res.status(201).json(novoGasto);
-};
-
-
-exports.listarGastos = (req, res) => {
-    res.json(gastos);
-};
-
-exports.obterGasto = (req, res) => {
-    const id = parseInt(req.params.id);
-    const gasto = gastos.find(g => g.id === id);
-    if (gasto) {
-        res.json(gasto);
-    } else {
-        res.status(404).json({ message: 'Gasto não encontrado.' });
+    try {
+        const novoGasto = await prisma.gasto.create({
+            data: {
+                descricao,
+                valor: parseFloat(valor)
+            }
+        });
+        res.status(201).json(novoGasto);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao adicionar o gasto', error });
     }
 };
 
+exports.listarGastos = async (req, res) => {
+    try {
+        const gastos = await prisma.gasto.findMany();
+        res.json(gastos);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao listar os gastos', error });
+    }
+};
 
-exports.atualizarGasto = (req, res) => {
-    const id = parseInt(req.params.id);
-    const gastoIndex = gastos.findIndex(g => g.id === id);
-    if (gastoIndex !== -1) {
-        const { descricao, valor } = req.body;
-        if (!descricao || !valor) {
-            return res.status(400).json({ message: 'Descrição e valor são obrigatórios.' });
+exports.obterGasto = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const gasto = await prisma.gasto.findUnique({
+            where: { id: parseInt(id) }
+        });
+        if (gasto) {
+            res.json(gasto);
+        } else {
+            res.status(404).json({ message: 'Gasto não encontrado.' });
         }
-        gastos[gastoIndex] = { id, descricao, valor };
-        res.json(gastos[gastoIndex]);
-    } else {
-        res.status(404).json({ message: 'Gasto não encontrado.' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao obter o gasto', error });
     }
 };
 
+exports.atualizarGasto = async (req, res) => {
+    const { id } = req.params;
+    const { descricao, valor } = req.body;
+    try {
+        const gastoAtualizado = await prisma.gasto.update({
+            where: { id: parseInt(id) },
+            data: {
+                descricao,
+                valor: parseFloat(valor)
+            }
+        });
+        res.json(gastoAtualizado);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao atualizar o gasto', error });
+    }
+};
 
-exports.excluirGasto = (req, res) => {
-    const id = parseInt(req.params.id);
-    const gastoIndex = gastos.findIndex(g => g.id === id);
-    if (gastoIndex !== -1) {
-        gastos.splice(gastoIndex, 1);
+exports.excluirGasto = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.gasto.delete({
+            where: { id: parseInt(id) }
+        });
         res.status(204).end();
-    } else {
-        res.status(404).json({ message: 'Gasto não encontrado.' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao excluir o gasto', error });
     }
 };

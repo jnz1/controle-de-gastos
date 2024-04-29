@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "Gasto" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "descricao" TEXT NOT NULL,
+    "valor" REAL NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
